@@ -1,9 +1,10 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar" dir="rtl" class="scroll-smooth">
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0">
   <title>ML questions</title>
 
   <!-- Tailwind CSS -->
@@ -17,7 +18,8 @@
       }
     };
   </script>
-  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+  <script id="MathJax-script" async
+    src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
 
   <style>
     body {
@@ -61,15 +63,41 @@
 <body class="bg-slate-50 text-slate-800">
 
   <!-- Sticky Header -->
-  <header class="sticky top-0 z-50 bg-white border-b-4 border-purple-600 shadow-md">
-    <div class="max-w-4xl mx-auto px-4 py-4 flex justify-between items-center">
-      <div>
-        <h1 class="text-2xl font-bold text-purple-800">بنك أسئلة Machine Learning</h1>
-        <p class="text-sm text-slate-500 mt-1">تدرب على الأسئلة واختبر معلوماتك </p>
+  <header
+    class="sticky top-0 z-40 bg-white border-b-4 border-purple-600 shadow-md">
+    <div
+      class="max-w-4xl mx-auto px-4 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+      <div class="text-center sm:text-right">
+        <h1 class="text-2xl font-bold text-purple-800">بنك
+          أسئلة Machine Learning</h1>
+        <p class="text-sm text-slate-500 mt-1">تدرب على
+          الأسئلة واختبر معلوماتك </p>
       </div>
-      <div class="bg-purple-100 px-6 py-3 rounded-xl border border-purple-200 text-center">
-        <span class="block text-sm text-purple-600 font-semibold mb-1">النتيجة</span>
-        <span id="scoreDisplay" class="text-2xl font-bold text-purple-800">0 / 0</span>
+
+      <div class="flex items-center gap-3">
+        <!-- Summary Button -->
+        <button onclick="showSummary()"
+          class="bg-red-50 hover:bg-red-100 text-red-600 px-4 py-3 rounded-xl border border-red-200 transition-all shadow-sm flex items-center gap-2 font-bold focus:outline-none">
+          <svg class="w-5 h-5" fill="none"
+            stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round"
+              stroke-linejoin="round" stroke-width="2"
+              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z">
+            </path>
+          </svg>
+          الأخطاء: <span id="wrongCountHeader"
+            class="bg-red-600 text-white px-2 py-0.5 rounded-md text-sm">0</span>
+        </button>
+
+        <!-- Score Display -->
+        <div
+          class="bg-purple-100 px-6 py-2 rounded-xl border border-purple-200 text-center shadow-sm">
+          <span
+            class="block text-xs text-purple-600 font-semibold mb-1">النتيجة</span>
+          <span id="scoreDisplay"
+            class="text-xl font-bold text-purple-800 transition-all duration-300 block">0
+            / 0</span>
+        </div>
       </div>
     </div>
   </header>
@@ -81,134 +109,182 @@
     </div>
   </main>
 
+  <!-- Summary Modal -->
+  <div id="summaryModal"
+    class="hidden fixed inset-0 bg-slate-900 bg-opacity-60 z-50 flex items-center justify-center p-4 backdrop-blur-sm transition-opacity duration-300 opacity-0">
+    <div
+      class="bg-white rounded-2xl max-w-lg w-full p-6 sm:p-8 shadow-2xl overflow-y-auto max-h-[85vh] relative transform scale-95 transition-transform duration-300"
+      id="summaryModalContent">
+      <button onclick="closeSummary()"
+        class="absolute top-4 left-4 text-slate-400 hover:text-slate-700 bg-slate-100 rounded-full p-2 hover:bg-slate-200 transition-colors">
+        <svg class="w-5 h-5" fill="none"
+          stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round"
+            stroke-linejoin="round" stroke-width="2"
+            d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+      </button>
+
+      <div class="text-center mb-6">
+        <div
+          class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-purple-100 text-purple-600 mb-4">
+          <svg class="w-8 h-8" fill="none"
+            stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round"
+              stroke-linejoin="round" stroke-width="2"
+              d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z">
+            </path>
+          </svg>
+        </div>
+        <h2 class="text-2xl font-bold text-slate-800">ملخص
+          الأداء</h2>
+        <p class="text-slate-500 mt-2"
+          id="summaryStatsText">لم تقم بالإجابة على أي أسئلة
+          بعد.</p>
+      </div>
+
+      <div id="summaryContent"
+        class="text-slate-700 space-y-4 border-t border-slate-100 pt-6">
+        <!-- Dynamic Content Injected Here -->
+      </div>
+
+      <div class="mt-8">
+        <button onclick="closeSummary()"
+          class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-4 rounded-xl transition-colors shadow-md">
+          إغلاق ومتابعة الاختبار
+        </button>
+      </div>
+    </div>
+  </div>
+
   <script>
     // Database of all questions based on the provided PDF
-    // Format: [ID, Topic, Question, OptA, OptB, OptC, OptD, CorrectIndex, (Optional) Explanation]
     const rawData = [
       [1, "LEC 1-ML BASICS", "In traditional programming, the developer provides rules and data. What does the system produce?", "A trained model", "New rules", "Output/predictions", "A hypothesis", 2, "في البرمجة التقليدية (Traditional Programming)، نقوم بإعطاء الحاسوب البيانات (Data) والقواعد (Rules/Logic) ليقوم هو بحساب المخرجات (Output/Predictions)."],
       [2, "LEC 1-ML BASICS", "In Machine Learning, the developer provides data and output. What does the system produce?", "More data", "Rules/equation/model", "Predictions only", "Labeled dataset", 1, "في تعلم الآلة (Machine Learning)، نعطي الخوارزمية البيانات (Data) والمخرجات المطلوبة (Output) لتقوم هي باستنتاج القواعد أو النموذج (Rules/Model) الذي يربط بينهما."],
       [3, "LEC 1-ML BASICS", "A company wants to predict the exact revenue next quarter. Which ML type fits best?", "Classification", "Clustering", "Regression", "Reinforcement Learning", 2, "توقع قيمة رقمية مستمرة (مثل الإيرادات أو السعر) يندرج دائماً تحت نوع الانحدار (Regression)."],
       [4, "LEC 1-ML BASICS", "A system groups customers into segments without any predefined labels. Which ML type is this?", "Supervised - Regression", "Supervised - Classification", "Unsupervised - Clustering", "Reinforcement Learning", 2, "تجميع البيانات في مجموعات (Segments) بدون وجود تصنيفات مسبقة (Unlabeled) هو أساس التعلم غير الخاضع للإشراف، وتحديداً التجميع (Clustering)."],
       [5, "LEC 1-ML BASICS", "What is the key difference between Supervised and Unsupervised learning?", "Supervised uses more data", "Supervised has labeled output, Unsupervised has input only", "Unsupervised is always more accurate", "Supervised only works for classification", 1, "الفرق الجوهري هو أن التعلم الخاضع للإشراف (Supervised) يستخدم بيانات مصنفة (Labeled Data)، بينما التعلم غير الخاضع للإشراف (Unsupervised) يستخدم بيانات غير مصنفة."],
-      [6, "LEC 1-ML BASICS", "A spam filter learns from emails labeled \"spam\" or \"not spam.\" Which type is this?", "Regression", "Clustering", "Reinforcement", "Classification", 3],
-      [7, "LEC 1-ML BASICS", "Which of the following is NOT one of the 4 ML algorithm types mentioned in the lecture?", "Supervised", "Unsupervised", "Semi-supervised", "Recommender Systems", 2],
-      [8, "LEC 2-ATTRIBUTES & SIMILARITY", "A dataset has attributes: Name, Age, Grade, Salary. Which pair are both Nominal?", "Name and Grade", "Name and Age", "Grade and Salary", "Name only", 0],
-      [9, "LEC 2-ATTRIBUTES & SIMILARITY", "Which attribute type supports ALL four operations: +, -, x, /?", "Nominal", "Ordinal", "Interval", "Ratio", 3],
-      [10, "LEC 2-ATTRIBUTES & SIMILARITY", "Similarity range is [0,1]. What does Dissimilarity minimum value equal?", "1", "0.5", "0", "Depends on data", 2],
-      [11, "LEC 2-ATTRIBUTES & SIMILARITY", "Two objects have 10 attributes. 7 of them match. What is their Nominal dissimilarity $d(i,j)$?", "0.7", "0.3", "7", "3", 1],
-      [12, "LEC 2-ATTRIBUTES & SIMILARITY", "Manhattan distance between (1,2) and (4,6) is:", "5", "7", "25", "$\\sqrt{25}$", 1],
-      [13, "LEC 2-ATTRIBUTES & SIMILARITY", "Euclidean distance between (0,0) and (3,4) is:", "7", "5", "25", "12", 1],
-      [14, "LEC 2-ATTRIBUTES & SIMILARITY", "What does \"Proximity\" mean in data mining?", "Only similarity", "Only dissimilarity", "Either similarity or dissimilarity", "The distance between clusters", 2],
-      [15, "LEC 2-3-DATA PREPROCESSING", "A dataset has missing values in one column. A developer decides to delete the entire row. What is this method called?", "Fill automatically", "Fill manually", "Ignore the tuple", "Global constant", 2],
-      [16, "LEC 2-3-DATA PREPROCESSING", "Equal Width binning divides data into bins of equal:", "Number of samples per bin", "Range/distance", "Mean values", "Frequency", 1],
-      [17, "LEC 2-3-DATA PREPROCESSING", "In Equal Frequency binning with $N=100$ samples and 5 bins, how many values per bin?", "5", "10", "20", "25", 2],
-      [18, "LEC 2-3-DATA PREPROCESSING", "Which binning smoothing method replaces all values in a bin with the closest boundary value?", "Smoothing by mean", "Smoothing by median", "Smoothing by boundaries", "Smoothing by mode", 2],
-      [19, "LEC 2-3-DATA PREPROCESSING", "Min-Max normalization maps data to which range?", "[-1,1]", "[0,100]", "[0,1]", "Depends on data", 2],
-      [20, "LEC 2-3-DATA PREPROCESSING", "Z-Score normalization formula uses which two statistical values?", "Min and Max", "Mean and Standard Deviation", "Median and Range", "Mode and Variance", 1],
-      [21, "LEC 2-3-DATA PREPROCESSING", "Decimal Scaling divides values by $10^j$. What determines j?", "Number of features", "Number of decimal places in largest value", "Mean of the dataset", "Number of bins", 1],
-      [22, "LEC 2-3-DATA PREPROCESSING", "PCA (Principal Component Analysis) belongs to which Data Reduction category?", "Numerosity Reduction", "Data Compression", "Dimensionality Reduction", "Data Cleaning", 2],
-      [23, "LEC 2-3-DATA PREPROCESSING", "Data Transformation includes 4 main techniques. Which one is NOT among them?", "Smoothing", "Normalization", "Discretization", "Clustering", 3],
-      [24, "LEC 3-4-REGRESSION & GD", "In Linear Regression $y=\\theta_{0}+\\theta_{1}X$, what does $\\theta_{0}$ represent?", "Slope", "Input feature", "Intercept", "Prediction error", 2],
-      [25, "LEC 3-4-REGRESSION & GD", "The MSE cost function formula is $J=(1/2m)\\Sigma(h-y)^{2}$. What does m represent?", "Number of features", "Number of training examples", "Learning rate", "Number of iterations", 1],
-      [26, "LEC 3-4-REGRESSION & GD", "Why is the factor $(1/2)$ included in the MSE formula?", "To make values smaller", "To cancel with the derivative making calculations cleaner", "To normalize the output", "It has no mathematical purpose", 1],
-      [27, "LEC 3-4-REGRESSION & GD", "After updating $\\theta$ using Gradient Descent, you check J and it increased. What should you do?", "Increase $\\alpha$", "Add more features", "Decrease $\\alpha$", "Increase number of iterations", 2],
-      [28, "LEC 3-4-REGRESSION & GD", "If learning rate $\\alpha=0$, what happens to $\\theta$ during Gradient Descent?", "$\\theta$ decreases rapidly", "$\\theta$ increases", "$\\theta$ never changes", "$\\theta$ resets to zero", 2],
-      [29, "LEC 3-4-REGRESSION & GD", "Gradient Descent update rule for $\\theta_1$ is: $\\theta_{1\\_new} = \\theta_{1\\_old} - (\\alpha/m)\\Sigma(h-y)X$. If $(h-y)$ is always positive, $\\theta_1$ will:", "Increase", "Stay same", "Decrease", "Oscillate", 2],
-      [30, "LEC 3-4-REGRESSION & GD", "What guarantees that Gradient Descent on MSE always finds the global minimum?", "Small learning rate", "Large dataset", "MSE is a convex function", "Many iterations", 2],
-      [31, "LEC 5-KNN", "In KNN Classification with $K=5$, neighbors vote: 3 say \"Yes\", 2 say \"No\". Output is:", "No", "Average of votes", "Yes", "Undefined", 2],
-      [32, "LEC 5-KNN", "In KNN Regression with $K=3$, neighbors have values: 10, 20, 30. Output is:", "10", "15", "30", "20", 3],
-      [33, "LEC 5-KNN", "What distance metric does KNN use by default?", "Manhattan", "Supremum", "Euclidean", "Nominal", 2],
-      [34, "LEC 5-KNN", "A very large K value in KNN will cause:", "Overfitting", "Underfitting-model too generalized", "Faster computation", "Perfect accuracy", 1],
-      [35, "LEC 5-KNN", "KNN is called a \"lazy learner\" because:", "It uses simple math", "It doesn't build a model during training - stores all data", "It only works on small datasets", "It has low accuracy", 1],
-      [36, "LEC 6-REGRESSION & SPLITS", "Feature Scaling ensures features are on similar scale. Which formula is used?", "$x'=x-min$", "$x'=x/max$ OR $x'=(x-\\mu)/(max-min)$", "$x'=x \\times max$", "$x'=x+mean$", 1],
-      [37, "LEC 6-REGRESSION & SPLITS", "Why does Feature Scaling help Gradient Descent?", "Reduces number of features", "Makes cost function perfectly convex", "Helps all features contribute equally - faster convergence", "Removes outliers", 2],
-      [38, "LEC 6-REGRESSION & SPLITS", "Dataset has 1000 rows. Using 70/15/15 split. How many rows for Validation?", "700", "100", "150", "200", 2],
-      [39, "LEC 6-REGRESSION & SPLITS", "What is the purpose of the Validation set?", "Train the model", "Final evaluation only", "Select best model and tune hyperparameters", "Replace the test set", 2],
-      [40, "LEC 6-REGRESSION & SPLITS", "Polynomial Regression $(X,X^{2},X^{3}...)$ is an example of:", "Feature Scaling", "Feature Engineering", "Normalization", "Regularization", 1],
-      [41, "LEC 6-REGRESSION & SPLITS", "J_valid is high after training. What should the developer do?", "Use test data immediately", "Change learning algorithm or tune hyperparameters", "Increase test set size", "Remove validation set", 1],
-      [42, "LEC 7-LOGISTIC REGRESSION", "Logistic Regression is used for Classification yet has \"Regression\" in its name because:", "It predicts continuous values", "It uses a linear equation internally then applies Sigmoid", "It's a type of Linear Regression", "It only works with numerical data", 1],
-      [43, "LEC 7-LOGISTIC REGRESSION", "Sigmoid function $g(z)=1/(1+e^{-z})$. What is g($\\infty$)?", "0", "0.5", "1", "Undefined", 2],
-      [44, "LEC 7-LOGISTIC REGRESSION", "In Logistic Regression, $h=0.7$. What is the prediction?", "0 - below threshold", "1 - above threshold of 0.5", "Undefined", "0.7", 1],
-      [45, "LEC 7-LOGISTIC REGRESSION", "Why can't we use MSE as cost function in Logistic Regression?", "MSE is too slow", "MSE with Sigmoid produces non-convex function - many local minima", "MSE only works for regression", "MSE can't handle binary values", 1],
-      [46, "LEC 7-LOGISTIC REGRESSION", "The Decision Boundary in Logistic Regression is defined where:", "$h=1$", "$h=0$", "$Z=0 \\rightarrow h=0.5$", "J is minimum", 2],
-      [47, "LEC 7-LOGISTIC REGRESSION", "Cost function in Logistic: when $y=1$ and $h=0$, what happens to cost?", "Cost = 0", "Cost = 0.5", "Cost = $\\infty$", "Cost stays constant", 2],
-      [48, "LEC 8-REGULARIZATION", "J_train is very low but J_test is very high. This is:", "Underfitting", "Good generalization", "Overfitting", "Convergence", 2],
-      [49, "LEC 8-REGULARIZATION", "Which regularization technique can reduce a feature's weight to exactly zero?", "Ridge (L2)", "Lasso (L1)", "Both equally", "Neither", 1],
-      [50, "LEC 8-REGULARIZATION", "Ridge regularization adds which penalty term to J?", "$\\lambda/2m \\times |\\theta_{1}|$", "$\\lambda/2m \\times \\theta_{1}^{2}$", "$\\lambda \\times \\theta_{1}$", "$\\lambda/m \\times \\theta_{0}$", 1],
-      [51, "LEC 8-REGULARIZATION", "In Ridge, the update rule becomes: $\\theta_{1\\_new}=\\theta_{1\\_old}(1-\\alpha\\lambda/m)-(\\alpha/m)\\Sigma(h-y)X$. What does the $(1-\\alpha\\lambda/m)$ factor do?", "Increases $\\theta_1$ each iteration", "Shrinks $\\theta_1$ slightly before gradient update", "Removes $\\theta_1$ completely", "Has no effect on $\\theta_1$", 1],
-      [52, "LEC 8-REGULARIZATION", "In K-Fold Cross Validation with $K=5$ and 1000 samples, how many samples are used as test in each fold?", "1000", "500", "200", "100", 2],
-      [53, "LEC 8-REGULARIZATION", "Final J_test in K-Fold is calculated as:", "Min of all J_test values", "Max of all J_test values", "Average of all J_test values", "Last J_test value only", 2],
-      [54, "LEC 8-REGULARIZATION", "$\\lambda$ (lambda) in regularization controls:", "Learning rate", "Number of features", "Strength of penalty - how much to shrink weights", "Number of iterations", 2],
-      [55, "LEC 9-MODEL EVALUATION", "$RMSE=\\sqrt{MSE}$. Why is RMSE sometimes preferred over MSE?", "RMSE is always smaller", "RMSE is in same units as target variable - easier to interpret", "RMSE removes outliers", "RMSE is faster to compute", 1],
-      [56, "LEC 9-MODEL EVALUATION", "A model predicts cancer (Positive = cancer, Negative = healthy). FN means:", "Predicted cancer, actually healthy", "Predicted healthy, actually healthy", "Predicted healthy, actually has cancer", "Predicted cancer, actually has cancer", 2],
-      [57, "LEC 9-MODEL EVALUATION", "In cancer detection, FN is more dangerous than FP because:", "FP costs more computationally", "FN means telling a sick person they are healthy", "FP reduces accuracy more", "FN is harder to compute", 1],
-      [58, "LEC 9-MODEL EVALUATION", "Recall $=TP/(TP+FN)$. Maximizing Recall means minimizing:", "FP", "TN", "FN", "TP", 2],
-      [59, "LEC 9-MODEL EVALUATION", "Precision $=TP/(TP+FP)$. Maximizing Precision means minimizing:", "FN", "TN", "TP", "FP", 3],
-      [60, "LEC 9-MODEL EVALUATION", "When should F1-Score be used instead of Accuracy?", "When dataset is balanced", "When dataset is unbalanced", "When model is overfitting", "When features are scaled", 1],
-      [61, "LEC 9-MODEL EVALUATION", "A model has Precision $=0.9$ and Recall $=0.1$. F1-Score is approximately:", "0.9", "0.5", "0.18", "1.0", 2],
-      [62, "LEC 10-SVM BASICS", "What is the main goal of SVM?", "Minimize training error only", "Find hyperplane with maximum margin between classes", "Cluster data into groups", "Minimize number of features", 1],
-      [63, "LEC 10-SVM BASICS", "Support Vectors are:", "All training data points", "Only misclassified points", "Closest points to hyperplane that define the margin", "Random selected points", 2],
-      [64, "LEC 10-SVM BASICS", "Margin in $SVM=2/||w||$. To maximize margin, we need to:", "Maximize $||w||$", "Minimize $||w||^{2}$", "Maximize $||w||^{2}$", "Set $||w||=1$", 1],
-      [65, "LEC 10-SVM BASICS", "SVM hyperplane equation is $w \\cdot X + b = 0$. The two support planes are:", "$w \\cdot X + b = 2$ and $w \\cdot X + b = -2$", "$w \\cdot X + b = 0.5$ and $w \\cdot X + b = -0.5$", "$w \\cdot X + b = 1$ and $w \\cdot X + b = -1$", "$w \\cdot X + b = 10$ and $w \\cdot X + b = -10$", 2],
-      [66, "LEC 10-SVM BASICS", "The SVM constraint is $y(w \\cdot X + b) \\ge 1$. What does this mean for a +Ve class point $(y=1)$?", "$w \\cdot X + b \\ge 0$", "$w \\cdot X + b \\le 1$", "$w \\cdot X + b \\ge 1$", "$w \\cdot X + b = 0$", 2],
-      [67, "LEC 10-SVM BASICS", "Dot product of vectors [2,3] and [5,4] is:", "22", "26", "15", "20", 0],
-      [68, "LEC 11-SVM KERNELS", "When is Non-Linear SVM used instead of Linear SVM?", "When dataset is very large", "When data is not linearly separable", "When accuracy is already high", "When features are normalized", 1],
-      [69, "LEC 11-SVM KERNELS", "What does a Kernel function do in SVM?", "Removes outliers from data", "Transforms data from lower to higher dimension making it separable", "Reduces number of features", "Calculates the margin directly", 1],
-      [70, "LEC 11-SVM KERNELS", "After applying Kernel function, data that was not linearly separable becomes:", "Clustered", "Normalized", "Linearly separable in higher dimension", "Removed from dataset", 2],
-      [71, "LEC 11-SVM KERNELS", "The key advantage of Kernels is they compute dot products at higher dimension without:", "Using training data", "Explicitly transforming all data points - saves computation", "Using the hyperplane", "Calculating margin", 1],
-      [72, "LEC 12-ENSEMBLE METHODS", "In One vs All (OvA) with 5 classes, how many classifiers are trained?", "10", "4", "5", "25", 2],
-      [73, "LEC 12-ENSEMBLE METHODS", "In One vs One (OvO) with 4 classes, how many classifiers are trained?", "4", "8", "6", "16", 2],
-      [74, "LEC 12-ENSEMBLE METHODS", "In OvA prediction, the final class is selected by:", "Voting", "Highest score among all K models", "Average of all scores", "Random selection", 1],
-      [75, "LEC 12-ENSEMBLE METHODS", "In OvO prediction, the final class is selected by:", "Highest score", "Average", "Voting - class with most wins", "First classifier result", 2],
-      [76, "LEC 12-ENSEMBLE METHODS", "Bagging uses Bootstrap (random sampling with replacement). What does \"with replacement\" mean?", "Same sample can appear multiple times in a subset", "Samples are replaced after training", "New data replaces old data", "Features are replaced with new ones", 0],
-      [77, "LEC 12-ENSEMBLE METHODS", "What is the main difference between Voting and Bagging ensemble methods?", "Voting uses different data, Bagging uses same data", "Voting uses different classifiers same data, Bagging uses same classifier different data subsets", "Both are identical", "Bagging uses sequential models, Voting uses parallel", 1],
-      [78, "LEC 12-ENSEMBLE METHODS", "In Stacking, what is the role of the Meta Model (Level 2)?", "Train on original data", "Replace base models", "Take predictions of base models as input and make final decision", "Select best base model", 2],
-      [79, "LEC 12-ENSEMBLE METHODS", "Boosting differs from Bagging because:", "Boosting uses different classifiers", "Boosting trains models sequentially each fixes errors of previous", "Boosting uses same data for all models", "Boosting only works for regression", 1],
-      [80, "LEC 12-ENSEMBLE METHODS", "Homogeneous Ensemble means:", "Different learners, same data", "Same learner, different data subsets", "Different learners, different data", "Same learner, same data", 1],
-      [81, "EXTRA-ATTRIBUTES", "Which attribute type has a meaningful order between values, but the magnitude of difference between values is NOT known?", "Nominal", "Binary", "Ordinal", "Interval", 2],
-      [82, "EXTRA-ATTRIBUTES", "Zip codes are made of digits (e.g. 11511, 21526). A student says \"I can calculate the average zip code, so it's Ratio.\" The student is:", "Correct - Ratio", "Wrong - Nominal", "Correct - Ordinal", "Wrong - Interval", 1],
-      [83, "EXTRA-ATTRIBUTES", "A Likert scale question: \"Rate your satisfaction: 1-Strongly Disagree, 2-Disagree, 3-Neutral, 4-Agree, 5-Strongly Agree.\" Which type?", "Interval", "Ratio", "Ordinal", "Nominal", 2],
-      [84, "EXTRA-ATTRIBUTES", "Which of the following pairs are BOTH Ratio attributes?", "Temperature in °C and Weight in kg", "Weight in kg and Height in cm", "Calendar Year and Number of Students", "IQ Score and Salary in EGP", 1],
-      [85, "EXTRA-ATTRIBUTES", "\"The difference between $20^{\\circ}C$ and $30^{\\circ}C$ is the same as between $30^{\\circ}C$ and $40^{\\circ}C$.\" This statement means Celsius temperature is at LEAST:", "Nominal", "Ordinal", "Interval", "Binary", 2],
-      [86, "EXTRA-ATTRIBUTES", "A doctor records blood type of patients: A, B, AB, O. Which is correct?", "Ordinal", "Nominal", "Interval", "Ratio", 1],
-      [87, "EXTRA-ATTRIBUTES", "Number of cars a person owns (0, 1, 2, 3...) - what makes it Ratio and NOT Interval?", "It has order", "It supports addition", "Zero truly means \"owns no cars\"", "Values are countable integers", 2],
-      [88, "EXTRA-ATTRIBUTES", "A student says \"Ordinal is a special case of Nominal.\" Another says \"Binary is a special case of Nominal.\" Who is correct?", "Only the first student", "Only the second student", "Both are correct", "Neither", 2],
-      [89, "EXTRA-ATTRIBUTES", "Which operation is VALID for Interval but INVALID for Ratio attributes?", "Subtraction", "Ranking values", "Saying \"value A is twice value B\"", "None - both support the same operations", 2],
-      [90, "EXTRA-ATTRIBUTES", "A hospital records the year patients were born (e.g. 1990, 2001). A researcher claims \"a patient born in 2000 is twice as old as one born in 1000.\" This claim is:", "Correct - Ratio", "Wrong - Interval", "Correct - numerical", "Wrong - Ordinal", 1],
-      [91, "EXTRA-ATTRIBUTES", "A dataset contains two attributes: phone number and number of calls made per day. Which classification is correct?", "Both Ratio", "Phone number Nominal, calls Ratio", "Phone number Interval, calls Ordinal", "Both Nominal", 1],
-      [92, "EXTRA-ATTRIBUTES", "Student grades: A+, A, B+, B, C+, C, D, F. A professor says \"the difference between A+ and A is the same as between B and C.\" This statement is:", "Correct - Interval", "Wrong - Ordinal", "Correct - Ratio", "Wrong - Nominal", 1],
-      [93, "EXTRA-ATTRIBUTES", "A thermometer shows $37.5^{\\circ}C$ as a patient's body temperature. Which is correct?", "Nominal", "Ordinal", "Ratio", "Interval", 3],
-      [94, "EXTRA-ATTRIBUTES", "A bank records the salary of employees in EGP (some earn 0 EGP = unpaid interns). Which is correct?", "Nominal", "Ordinal", "Interval", "Ratio", 3],
-      [95, "EXTRA-ATTRIBUTES", "A history book records years of historical events: 500 BC, 1000 AD, 2000 AD. A student claims \"year 2000 is 4 times year 500.\" This claim is:", "Correct - Ratio", "Wrong - Interval", "Correct - Ordinal", "Wrong - Nominal", 1],
-      [96, "EXTRA-ATTRIBUTES", "A geography dataset stores longitude coordinates of cities (e.g. Cairo $=31.2^{\\circ}E$, London $=0^{\\circ}$, New York $=74^{\\circ}W$). Which is correct?", "Nominal", "Ordinal", "Interval", "Ratio", 2],
-      [97, "EXTRA-ATTRIBUTES", "A hospital records blood pressure in mmHg for patients (0 mmHg = literally no blood pressure). Which is correct?", "Nominal", "Ordinal", "Interval", "Ratio", 3],
-      [98, "EXTRA-ML CONCEPTS", "A model has J_train $=0.05$ and J_test $=0.8$. What is the most likely problem?", "Underfitting", "Overshooting", "Overfitting", "High learning rate", 2],
-      [99, "EXTRA-ML CONCEPTS", "You apply Gradient Descent and after every iteration J is increasing not decreasing. What is the most likely cause?", "Too many features", "Learning rate $\\alpha$ is too large", "Learning rate $\\alpha$ is too small", "The dataset is too small", 1],
-      [100, "EXTRA-ML CONCEPTS", "A KNN model with $K=1$ will most likely cause:", "Underfitting", "High Bias", "Overfitting", "Slow convergence", 2],
-      [101, "EXTRA-ML CONCEPTS", "Lasso regularization is preferred over Ridge when:", "You want to reduce all weights equally", "You want to completely eliminate unimportant features", "Your dataset is large", "You have a convex cost function", 1],
-      [102, "EXTRA-ML CONCEPTS", "As the number of training examples increases, overfitting error decreases but training error slightly increases. At some point both errors meet and stabilize. What is this point called?", "Convergence point", "Optimal point - where more data won't help", "Underfitting zone", "Validation threshold", 1],
-      [103, "EXTRA-ML CONCEPTS", "In Gradient Descent, J starts high then drops steeply then flattens completely. What does the flat part mean?", "Learning rate is too small", "Model is overfitting", "Algorithm has converged - minimum reached", "More iterations needed", 2],
-      [104, "EXTRA-ML CONCEPTS", "The Sigmoid function output is always between 0 and 1. What happens exactly when the input $Z=0$?", "Output $=0$", "Output $=1$", "Output $=0.5$", "Output = undefined", 2],
-      [105, "EXTRA-ML CONCEPTS", "The cost function J in Linear Regression is convex. What does this guarantee?", "Multiple local minima exist", "Gradient Descent may get stuck", "There is exactly one global minimum", "J will always equal zero", 2],
-      [106, "EXTRA-ML CONCEPTS", "Why is MSE specifically chosen as the cost function in Linear Regression instead of other functions?", "It's the simplest formula", "It produces a convex shape guaranteeing one optimal solution", "It works only with large datasets", "It prevents overfitting automatically", 1],
-      [107, "EXTRA-ML CONCEPTS", "In the convex J graph, you are currently at a point where the slope is negative. What will Gradient Descent do?", "Increase $\\theta$ to move right toward minimum", "Decrease $\\theta$ to move left", "Stop immediately", "Overshoot the minimum", 0],
-      [108, "EXTRA-ML CONCEPTS", "In the convex J graph, you are at a point where the slope is positive. Gradient Descent will:", "Increase $\\theta$", "Keep unchanged", "Decrease $\\theta$ to move left toward minimum", "Reset to zero", 2],
-      [109, "SCALE PRACTICE - MIN-MAX", "Min-Max Normalization: Data $=[2,6,10,14,18]$. Normalize $x=10$.", "0.25", "0.50", "0.75", "0.80", 1],
-      [110, "SCALE PRACTICE - MIN-MAX", "Min-Max Normalization: Data $=[0,25,50,75,100]$. Normalize $x=25$.", "0.50", "0.75", "0.25", "0.10", 2],
-      [111, "SCALE PRACTICE-Z-SCORE", "Z-Score Normalization: Data $= [10, 20, 30, 40, 50]$. Normalize $x=50$.", "1.0", "-1.41", "0.71", "1.41", 3],
-      [112, "SCALE PRACTICE-Z-SCORE", "Z-Score Normalization: Data $=[5,10,15,20,25]$. Normalize $x=5$.", "1.41", "-0.71", "-1.41", "0.71", 2],
-      [113, "SCALE PRACTICE - DEC SCALING", "Decimal Scaling: Data $=[45,120,250,380,500]$. Scale $x=250$.", "0.025", "2.5", "0.25", "25", 2],
-      [114, "SCALE PRACTICE - DEC SCALING", "Decimal Scaling: Data $= [90, 288, 800, 1200, 2000]$. Scale $x=288$.", "0.288", "0.0288", "2.88", "0.00288", 1],
-      [115, "PREPROCESSING - BINNING", "EQUAL WIDTH BINNING: Data $= [4, 8, 12, 16, 20, 24, 28, 32, 36, 40]$, bins $= 4$. What is the bin width?", "7", "8", "9", "10", 2],
-      [116, "PREPROCESSING - BINNING", "Value 20 belongs to which bin? (Data as previous question)", "Bin 1 $\\rightarrow [4,13)$", "Bin 2 $\\rightarrow [13, 22)$", "Bin 3 $\\rightarrow [22, 31)$", "Bin 4 $\\rightarrow [31, 40]$", 1],
-      [117, "PREPROCESSING-BINNING", "How many values are in Bin 4? (Data as previous question)", "1", "2", "3", "4", 2],
-      [118, "PREPROCESSING-BINNING", "EQUAL FREQUENCY BINNING: Data $= [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47]$, bins $= 4$. How many values per bin?", "2", "6", "4", "3", 3],
-      [119, "PREPROCESSING-BINNING", "Value 31 belongs to which bin? (Data as previous question)", "Bin 1", "Bin 2", "Bin 3", "Bin 4", 2],
-      [120, "PREPROCESSING-BINNING", "What are the values in Bin 2? (Data as previous question)", "3, 7, 11", "11, 15, 19", "15, 19, 23", "27, 31, 35", 2]
+      [6, "LEC 1-ML BASICS", "A spam filter learns from emails labeled \"spam\" or \"not spam.\" Which type is this?", "Regression", "Clustering", "Reinforcement", "Classification", 3, "تحديد رسائل البريد العشوائي يتطلب التنبؤ بفئة محددة (Spam أو Not Spam) بدلاً من قيمة مستمرة، لذلك يعتبر تصنيفاً (Classification)."],
+      [7, "LEC 1-ML BASICS", "Which of the following is NOT one of the 4 ML algorithm types mentioned in the lecture?", "Supervised", "Unsupervised", "Semi-supervised", "Recommender Systems", 2, "الأنواع الأربعة الرئيسية التي يتم تدريسها عادةً كأساسيات هي: Supervised, Unsupervised, Reinforcement, و Recommender Systems. تقنية Semi-supervised تعتبر هجيناً وليست نوعاً أساسياً مستقلاً في هذا السياق."],
+      [8, "LEC 2-ATTRIBUTES & SIMILARITY", "A dataset has attributes: Name, Age, Grade, Salary. Which pair are both Nominal?", "Name and Grade", "Name and Age", "Grade and Salary", "Name only", 0, "البيانات الاسمية (Nominal) تمثل فئات بدون ترتيب رياضي. الاسم هو Nominal. في هذا السياق، الدرجة (Grade) قد تعامل أيضاً كفئة اسمية في حال كانت نصوصاً غير مرتبة، مقارنة بالعمر والراتب اللذين يمثلان قيماً نسبية (Ratio)."],
+      [9, "LEC 2-ATTRIBUTES & SIMILARITY", "Which attribute type supports ALL four operations: +, -, x, /?", "Nominal", "Ordinal", "Interval", "Ratio", 3, "البيانات النسبية (Ratio) تحتوي على 'صفر مطلق' حقيقي، مما يسمح بإجراء جميع العمليات الحسابية (الجمع، الطرح، الضرب، والقسمة) عليها بشكل منطقي."],
+      [10, "LEC 2-ATTRIBUTES & SIMILARITY", "Similarity range is [0,1]. What does Dissimilarity minimum value equal?", "1", "0.5", "0", "Depends on data", 2, "التشابه (Similarity) والاختلاف (Dissimilarity) يتراوحان بين 0 و 1. إذا كان الشيئان متطابقين تماماً، يكون التشابه 1 والاختلاف 0 (وهي أقل قيمة ممكنة للاختلاف)."],
+      [11, "LEC 2-ATTRIBUTES & SIMILARITY", "Two objects have 10 attributes. 7 of them match. What is their Nominal dissimilarity $d(i,j)$?", "0.7", "0.3", "7", "3", 1, "قانون حساب الاختلاف للبيانات الاسمية: عدد الخصائص غير المتطابقة مقسوماً على العدد الكلي. الخصائص غير المتطابقة = 10 - 7 = 3. إذن الاختلاف = 3/10 = 0.3."],
+      [12, "LEC 2-ATTRIBUTES & SIMILARITY", "Manhattan distance between (1,2) and (4,6) is:", "5", "7", "25", "$\\sqrt{25}$", 1, "مسافة مانهاتن تُحسب بجمع الفروق المطلقة للإحداثيات: |1 - 4| + |2 - 6| = 3 + 4 = 7."],
+      [13, "LEC 2-ATTRIBUTES & SIMILARITY", "Euclidean distance between (0,0) and (3,4) is:", "7", "5", "25", "12", 1, "المسافة الإقليدية هي الجذر التربيعي لمجموع مربعات الفروق: √( (0-3)² + (0-4)² ) = √(9 + 16) = √25 = 5."],
+      [14, "LEC 2-ATTRIBUTES & SIMILARITY", "What does \"Proximity\" mean in data mining?", "Only similarity", "Only dissimilarity", "Either similarity or dissimilarity", "The distance between clusters", 2, "في تنقيب البيانات، مصطلح التقارب (Proximity) يُستخدم بشكل عام للدلالة على مدى اقتراب (تشابه) أو ابتعاد (اختلاف) نقاط البيانات عن بعضها البعض."],
+      [15, "LEC 2-3-DATA PREPROCESSING", "A dataset has missing values in one column. A developer decides to delete the entire row. What is this method called?", "Fill automatically", "Fill manually", "Ignore the tuple", "Global constant", 2, "عند حذف صف (Tuple) بأكمله بسبب نقص بعض البيانات المهمة فيه، تُسمى هذه العملية 'تجاهل الصف' (Ignore the tuple)."],
+      [16, "LEC 2-3-DATA PREPROCESSING", "Equal Width binning divides data into bins of equal:", "Number of samples per bin", "Range/distance", "Mean values", "Frequency", 1, "في التقسيم متساوي العرض (Equal Width)، يتم تقسيم المدى الكلي للبيانات (Range) إلى فترات (Bins) متساوية في المسافة أو العرض، بغض النظر عن عدد العناصر داخل كل فترة."],
+      [17, "LEC 2-3-DATA PREPROCESSING", "In Equal Frequency binning with $N=100$ samples and 5 bins, how many values per bin?", "5", "10", "20", "25", 2, "التقسيم متساوي التكرار (Equal Frequency) يوزع العناصر بالتساوي. 100 عينة مقسمة على 5 فترات تعني 100 ÷ 5 = 20 عينة توضع في كل فترة."],
+      [18, "LEC 2-3-DATA PREPROCESSING", "Which binning smoothing method replaces all values in a bin with the closest boundary value?", "Smoothing by mean", "Smoothing by median", "Smoothing by boundaries", "Smoothing by mode", 2, "في طريقة التنعيم بالحدود (Smoothing by boundaries)، يتم استبدال كل قيمة داخل الفترة بأقرب حد لها، سواء كان الحد الأدنى أو الأقصى لتلك الفترة."],
+      [19, "LEC 2-3-DATA PREPROCESSING", "Min-Max normalization maps data to which range?", "[-1,1]", "[0,100]", "[0,1]", "Depends on data", 2, "تقنية Min-Max تُستخدم لتغيير مقياس جميع البيانات لتصبح محصورة في نطاق موحد، والذي يكون قياسياً وافتراضياً بين 0 و 1."],
+      [20, "LEC 2-3-DATA PREPROCESSING", "Z-Score normalization formula uses which two statistical values?", "Min and Max", "Mean and Standard Deviation", "Median and Range", "Mode and Variance", 1, "تحويل Z-Score يعتمد على طرح المتوسط الحسابي (Mean) من القيمة، ثم القسمة على الانحراف المعياري (Standard Deviation) لتوحيد التوزيع."],
+      [21, "LEC 2-3-DATA PREPROCESSING", "Decimal Scaling divides values by $10^j$. What determines j?", "Number of features", "Number of decimal places in largest value", "Mean of the dataset", "Number of bins", 1, "في الـ Decimal Scaling، يتم اختيار القوة (j) بناءً على عدد الخانات لأكبر رقم مطلق في البيانات، وذلك لضمان أن جميع القيم بعد القسمة تصبح أصغر من 1."],
+      [22, "LEC 2-3-DATA PREPROCESSING", "PCA (Principal Component Analysis) belongs to which Data Reduction category?", "Numerosity Reduction", "Data Compression", "Dimensionality Reduction", "Data Cleaning", 2, "خوارزمية PCA تُستخدم لاستخراج الميزات وتقليل عدد الأبعاد (Dimensionality Reduction) مع الحفاظ على أكبر قدر ممكن من تباين ومعلومات البيانات الأصلية."],
+      [23, "LEC 2-3-DATA PREPROCESSING", "Data Transformation includes 4 main techniques. Which one is NOT among them?", "Smoothing", "Normalization", "Discretization", "Clustering", 3, "التجميع (Clustering) هو خوارزمية للتعلم الآلي غير الخاضع للإشراف، وليس تقنية لتحضير أو تحويل البيانات (Data Transformation) مثل التنعيم والتطبيع."],
+      [24, "LEC 3-4-REGRESSION & GD", "In Linear Regression $y=\\theta_{0}+\\theta_{1}X$, what does $\\theta_{0}$ represent?", "Slope", "Input feature", "Intercept", "Prediction error", 2, "في المعادلة الخطية للخط المستقيم، تُمثل $\\theta_{0}$ نقطة التقاطع مع محور الصادات (Y-Intercept)، بينما تُمثل $\\theta_{1}$ ميل الخط (Slope)."],
+      [25, "LEC 3-4-REGRESSION & GD", "The MSE cost function formula is $J=(1/2m)\\Sigma(h-y)^{2}$. What does m represent?", "Number of features", "Number of training examples", "Learning rate", "Number of iterations", 1, "في معادلة دالة التكلفة الخاصة بتعلم الآلة، يرمز الحرف (m) دائماً إلى إجمالي عدد الأمثلة أو العينات المستخدمة في مجموعة التدريب."],
+      [26, "LEC 3-4-REGRESSION & GD", "Why is the factor $(1/2)$ included in the MSE formula?", "To make values smaller", "To cancel with the derivative making calculations cleaner", "To normalize the output", "It has no mathematical purpose", 1, "النصف (1/2) يُضاف لتبسيط الرياضيات؛ فعند حساب المشتقة لـ Gradient Descent، يتم إنزال الأس (2) للتربيع ويُحذف مع النصف لتصبح المعادلة أبسط نظرياً وكسرياً."],
+      [27, "LEC 3-4-REGRESSION & GD", "After updating $\\theta$ using Gradient Descent, you check J and it increased. What should you do?", "Increase $\\alpha$", "Add more features", "Decrease $\\alpha$", "Increase number of iterations", 2, "إذا كانت قيمة الخطأ (Cost) تزداد بدلاً من أن تقل، فهذا يعني أن خطوات التحديث كبيرة جداً وتتجاوز الحل (Overshooting). الحل هو تقليل معدل التعلم $\\alpha$."],
+      [28, "LEC 3-4-REGRESSION & GD", "If learning rate $\\alpha=0$, what happens to $\\theta$ during Gradient Descent?", "$\\theta$ decreases rapidly", "$\\theta$ increases", "$\\theta$ never changes", "$\\theta$ resets to zero", 2, "إذا كان معدل التعلم $\\alpha$ يساوي صفراً، فإن مقدار التحديث بأكمله سيُضرب في صفر ولن تتغير قيم $\\theta$ أبداً (النموذج لن يتعلم أي شيء)."],
+      [29, "LEC 3-4-REGRESSION & GD", "Gradient Descent update rule for $\\theta_1$ is: $\\theta_{1\\_new} = \\theta_{1\\_old} - (\\alpha/m)\\Sigma(h-y)X$. If $(h-y)$ is always positive, $\\theta_1$ will:", "Increase", "Stay same", "Decrease", "Oscillate", 2, "بما أن (h-y) موجب ومعدل التعلم موجب، فالمقدار المضروب موجب. وبما أن المعادلة تحتوي على علامة طرح، سيتم طرح هذه القيمة الموجبة من $\\theta_{1}$ مما يؤدي إلى تقليل قيمتها."],
+      [30, "LEC 3-4-REGRESSION & GD", "What guarantees that Gradient Descent on MSE always finds the global minimum?", "Small learning rate", "Large dataset", "MSE is a convex function", "Many iterations", 2, "دالة الخطأ التربيعي (MSE) تنتج شكلاً رياضياً محدباً (Convex) يشبه الوعاء، مما يضمن وجود قاع واحد فقط (Global minimum) دون أي قيعان وهمية (Local minima) لتعلق بها الخوارزمية."],
+      [31, "LEC 5-KNN", "In KNN Classification with $K=5$, neighbors vote: 3 say \"Yes\", 2 say \"No\". Output is:", "No", "Average of votes", "Yes", "Undefined", 2, "في تصنيف KNN، القاعدة هي التصويت بالأغلبية (Majority Voting). وجود 3 أصوات لـ Yes مقابل 2 لـ No يعني أن النتيجة النهائية ستكون التصنيف Yes."],
+      [32, "LEC 5-KNN", "In KNN Regression with $K=3$, neighbors have values: 10, 20, 30. Output is:", "10", "15", "30", "20", 3, "في الانحدار (Regression) باستخدام KNN، يتم اتخاذ القرار بناءً على المتوسط الحسابي للقيم المجاورة: (10 + 20 + 30) / 3 = 60 / 3 = 20."],
+      [33, "LEC 5-KNN", "What distance metric does KNN use by default?", "Manhattan", "Supremum", "Euclidean", "Nominal", 2, "المسافة الإقليدية (Euclidean Distance) هي مقياس المسافة الافتراضي والأكثر شيوعاً واستخداماً عند التعامل مع بيانات رقمية في خوارزمية KNN."],
+      [34, "LEC 5-KNN", "A very large K value in KNN will cause:", "Overfitting", "Underfitting-model too generalized", "Faster computation", "Perfect accuracy", 1, "إذا كانت قيمة K كبيرة جداً، فإن النموذج سيأخذ الأغلبية المطلقة لبيانات التدريب ولن يهتم بالأنماط المحلية الدقيقة، مما يؤدي إلى فرط التعميم (Underfitting)."],
+      [35, "LEC 5-KNN", "KNN is called a \"lazy learner\" because:", "It uses simple math", "It doesn't build a model during training - stores all data", "It only works on small datasets", "It has low accuracy", 1, "يُسمى KNN بالمتعلم الكسول (Lazy Learner) لأنه لا يقوم بأي عملية تعلم أو استنتاج لنموذج أثناء مرحلة التدريب؛ بل يكتفي بحفظ البيانات ويقوم بكل العمليات الحسابية في مرحلة الاختبار المباشر."],
+      [36, "LEC 6-REGRESSION & SPLITS", "Feature Scaling ensures features are on similar scale. Which formula is used?", "$x'=x-min$", "$x'=x/max$ OR $x'=(x-\\mu)/(max-min)$", "$x'=x \\times max$", "$x'=x+mean$", 1, "هذه الخيارات تمثل طرق تغيير المقياس الشائعة (Normalization). الصيغة الصحيحة هي قسمة القيمة على أقصى قيمة، أو طرح المتوسط والقسمة على المدى (Mean Normalization)."],
+      [37, "LEC 6-REGRESSION & SPLITS", "Why does Feature Scaling help Gradient Descent?", "Reduces number of features", "Makes cost function perfectly convex", "Helps all features contribute equally - faster convergence", "Removes outliers", 2, "عندما تكون الخصائص في نفس النطاق الكنتوري، تُصبح مسارات خوارزمية Gradient Descent دائرية ومتناسقة، مما يُسرع عملية الوصول للحد الأدنى (Convergence) ويمنع التذبذب."],
+      [38, "LEC 6-REGRESSION & SPLITS", "Dataset has 1000 rows. Using 70/15/15 split. How many rows for Validation?", "700", "100", "150", "200", 2, "نسبة التقسيم للتحقق (Validation) هي 15%. إذن 1000 صف × 0.15 = 150 صفاً سيتم تخصيصها لمجموعة التحقق."],
+      [39, "LEC 6-REGRESSION & SPLITS", "What is the purpose of the Validation set?", "Train the model", "Final evaluation only", "Select best model and tune hyperparameters", "Replace the test set", 2, "الهدف الأساسي من مجموعة التحقق (Validation Set) هو تجربة النماذج المختلفة أثناء التدريب وضبط المعلمات (Hyperparameters) لاختيار الأفضل قبل التقييم النهائي."],
+      [40, "LEC 6-REGRESSION & SPLITS", "Polynomial Regression $(X,X^{2},X^{3}...)$ is an example of:", "Feature Scaling", "Feature Engineering", "Normalization", "Regularization", 1, "استحداث ميزات جديدة من الميزات الحالية (مثل تربيع القيم أو تكعيبها) يُعد جزءاً من هندسة الميزات (Feature Engineering) لجعل النموذج الخطي قادراً على التقاط العلاقات المعقدة."],
+      [41, "LEC 6-REGRESSION & SPLITS", "J_valid is high after training. What should the developer do?", "Use test data immediately", "Change learning algorithm or tune hyperparameters", "Increase test set size", "Remove validation set", 1, "الخطأ العالي في Validation Set يعني أن النموذج أداؤه سيء ولم يتم ضبطه بعد. لا يجب لمس بيانات الـ Test، بل يجب تعديل النموذج أو تغيير المعلمات (Hyperparameters) وإعادة المحاولة."],
+      [42, "LEC 7-LOGISTIC REGRESSION", "Logistic Regression is used for Classification yet has \"Regression\" in its name because:", "It predicts continuous values", "It uses a linear equation internally then applies Sigmoid", "It's a type of Linear Regression", "It only works with numerical data", 1, "يحتوي على كلمة 'Regression' لأنه في النواة يحسب خطاً مستقيماً (معادلة خطية) تماماً كالانحدار الخطي، لكنه يمرر الناتج لدالة Sigmoid لتحويله إلى احتمالية للتصنيف."],
+      [43, "LEC 7-LOGISTIC REGRESSION", "Sigmoid function $g(z)=1/(1+e^{-z})$. What is g($\\infty$)?", "0", "0.5", "1", "Undefined", 2, "من خصائص دالة Sigmoid أنها تقترب من القيمة 1 عندما تتجه المدخلات نحو الموجب ما لا نهاية، وتقترب من 0 عندما تتجه نحو السالب ما لا نهاية."],
+      [44, "LEC 7-LOGISTIC REGRESSION", "In Logistic Regression, $h=0.7$. What is the prediction?", "0 - below threshold", "1 - above threshold of 0.5", "Undefined", "0.7", 1, "الحد الفاصل (Threshold) الافتراضي لاتخاذ القرار هو 0.5. بما أن الاحتمالية 0.7 هي أكبر من 0.5، فإن النموذج يصنف العينة على أنها تنتمي للفئة الموجبة (1)."],
+      [45, "LEC 7-LOGISTIC REGRESSION", "Why can't we use MSE as cost function in Logistic Regression?", "MSE is too slow", "MSE with Sigmoid produces non-convex function - many local minima", "MSE only works for regression", "MSE can't handle binary values", 1, "استخدام دالة MSE مع التمويه الناتج من دالة Sigmoid يُنتج دالة تكلفة معقدة ومتعرجة (Non-convex) تحتوي على قيعان محلية (Local minima) تجعل Gradient Descent يعلق ولا يجد الحل الأمثل."],
+      [46, "LEC 7-LOGISTIC REGRESSION", "The Decision Boundary in Logistic Regression is defined where:", "$h=1$", "$h=0$", "$Z=0 \\rightarrow h=0.5$", "J is minimum", 2, "الحد الفاصل (Decision Boundary) يحدث عندما تكون الاحتمالية 0.5 تماماً. في دالة Sigmoid، ناتج الدالة يكون 0.5 عندما يكون إجمالي المدخل (Z) يساوي صفراً."],
+      [47, "LEC 7-LOGISTIC REGRESSION", "Cost function in Logistic: when $y=1$ and $h=0$, what happens to cost?", "Cost = 0", "Cost = 0.5", "Cost = $\\infty$", "Cost stays constant", 2, "في دالة الخطأ اللوغاريتمي، إذا كانت النتيجة الحقيقية هي 1 ولكن النموذج توقع بقوة أنها 0 (احتمالية 0%)، فإن الخطأ (Cost) يرتفع للما لا نهاية (Infinity) كعقاب شديد لثقته الخاطئة."],
+      [48, "LEC 8-REGULARIZATION", "J_train is very low but J_test is very high. This is:", "Underfitting", "Good generalization", "Overfitting", "Convergence", 2, "الخطأ المنخفض جداً في مجموعة التدريب مقابل الخطأ المرتفع في الاختبار يعني أن النموذج 'حفظ' البيانات الأصلية مع ضوضائها وفشل في التعامل مع بيانات جديدة، وهو ما يُعرف بفرط التخصيص (Overfitting)."],
+      [49, "LEC 8-REGULARIZATION", "Which regularization technique can reduce a feature's weight to exactly zero?", "Ridge (L2)", "Lasso (L1)", "Both equally", "Neither", 1, "من الخصائص الرياضية الفريدة لـ Lasso Regularization (L1) أنها قادرة على تقليص أوزان الخصائص الضعيفة أو غير المهمة إلى الصفر تماماً، مما يعمل كأداة لاختيار وتصفية الخصائص (Feature Selection)."],
+      [50, "LEC 8-REGULARIZATION", "Ridge regularization adds which penalty term to J?", "$\\lambda/2m \\times |\\theta_{1}|$", "$\\lambda/2m \\times \\theta_{1}^{2}$", "$\\lambda \\times \\theta_{1}$", "$\\lambda/m \\times \\theta_{0}$", 1, "خوارزمية Ridge (L2) تقوم بمعاقبة الأوزان الكبيرة بإضافة مجموع 'مربعات' الأوزان (مضروباً بمعامل التنظيم $\\lambda$) إلى دالة التكلفة لمنعها من التضخم."],
+      [51, "LEC 8-REGULARIZATION", "In Ridge, the update rule becomes: $\\theta_{1\\_new}=\\theta_{1\\_old}(1-\\alpha\\lambda/m)-(\\alpha/m)\\Sigma(h-y)X$. What does the $(1-\\alpha\\lambda/m)$ factor do?", "Increases $\\theta_1$ each iteration", "Shrinks $\\theta_1$ slightly before gradient update", "Removes $\\theta_1$ completely", "Has no effect on $\\theta_1$", 1, "هذا المعامل (والذي يكون أقل من 1 بقليل) يقوم بضرب وتقليص قيمة الوزن $\\theta$ بشكل طفيف في كل خطوة تدريب قبل تطبيق التحديث المعتاد، وهو ما يُعرف بـ (Weight Decay)."],
+      [52, "LEC 8-REGULARIZATION", "In K-Fold Cross Validation with $K=5$ and 1000 samples, how many samples are used as test in each fold?", "1000", "500", "200", "100", 2, "البيانات تقسم إلى 5 أجزاء متساوية (Folds). كل جزء سيحتوي على 1000 ÷ 5 = 200 عينة. في كل دورة تدريب، يُستخدم جزء واحد كاختبار (200) وباقي الأجزاء للتدريب."],
+      [53, "LEC 8-REGULARIZATION", "Final J_test in K-Fold is calculated as:", "Min of all J_test values", "Max of all J_test values", "Average of all J_test values", "Last J_test value only", 2, "التقييم النهائي لأداء النموذج في K-Fold Cross Validation يتم عبر حساب المتوسط الحسابي (Average) للأخطاء الناتجة عن جميع الدورات (Folds) المختلفة."],
+      [54, "LEC 8-REGULARIZATION", "$\\lambda$ (lambda) in regularization controls:", "Learning rate", "Number of features", "Strength of penalty - how much to shrink weights", "Number of iterations", 2, "معامل التنظيم $\\lambda$ يحدد مدى قوة العقاب على الأوزان. القيمة العالية تعني عقاباً وتقليصاً قوياً للأوزان (قد يسبب Underfitting)، بينما القيمة المنخفضة تعني تقليصاً ضعيفاً."],
+      [55, "LEC 9-MODEL EVALUATION", "$RMSE=\\sqrt{MSE}$. Why is RMSE sometimes preferred over MSE?", "RMSE is always smaller", "RMSE is in same units as target variable - easier to interpret", "RMSE removes outliers", "RMSE is faster to compute", 1, "بما أن MSE تُربّع القيم، فإن الوحدة الناتجة تكون مربعة (مثل: أسعار مربعة). أخذ الجذر التربيعي (RMSE) يعيد الخطأ لنفس وحدة المتغير المستهدف مما يجعله مفهوماً وقابلاً للقراءة للبشر."],
+      [56, "LEC 9-MODEL EVALUATION", "A model predicts cancer (Positive = cancer, Negative = healthy). FN means:", "Predicted cancer, actually healthy", "Predicted healthy, actually healthy", "Predicted healthy, actually has cancer", "Predicted cancer, actually has cancer", 2, "كلمة False تعني أن التوقع 'خاطئ'. وكلمة Negative تعني أن النموذج توقع الحالة 'السلبية' (أنه سليم). إذن التوقع كان سليم، لكن الحقيقة أنه مريض بالسرطان."],
+      [57, "LEC 9-MODEL EVALUATION", "In cancer detection, FN is more dangerous than FP because:", "FP costs more computationally", "FN means telling a sick person they are healthy", "FP reduces accuracy more", "FN is harder to compute", 1, "الـ False Negative في المجال الطبي كارثي لأنه يعني أن المريض المصاب سيُقال له أنه سليم ولن يتلقى العلاج ليموت، بينما الـ False Positive سيتم اكتشاف خطأه لاحقاً بعد فحوصات إضافية."],
+      [58, "LEC 9-MODEL EVALUATION", "Recall $=TP/(TP+FN)$. Maximizing Recall means minimizing:", "FP", "TN", "FN", "TP", 2, "دالة الاستدعاء (Recall) تقيس قدرة النموذج على التقاط كل الحالات الإيجابية الفعلية الموجودة. لتعظيم قيمتها، يجب علينا تقليل عدد الحالات الموجبة التي فاتتنا وفشلنا في رصدها (False Negatives)."],
+      [59, "LEC 9-MODEL EVALUATION", "Precision $=TP/(TP+FP)$. Maximizing Precision means minimizing:", "FN", "TN", "TP", "FP", 3, "دالة الدقة (Precision) تقيس مدى صحة توقعات النموذج الإيجابية. لتعظيمها، يجب علينا تقليل عدد التوقعات الإيجابية الخاطئة أو الإنذارات الكاذبة (False Positives)."],
+      [60, "LEC 9-MODEL EVALUATION", "When should F1-Score be used instead of Accuracy?", "When dataset is balanced", "When dataset is unbalanced", "When model is overfitting", "When features are scaled", 1, "مقياس الدقة (Accuracy) يكون خادعاً جداً إذا كانت الفئات غير متوازنة (مثلاً 99% أصحاء و 1% مرضى). F1-Score هو مقياس أدق هنا لأنه يمثل المتوسط التوافقي بين Precision و Recall."],
+      [61, "LEC 9-MODEL EVALUATION", "A model has Precision $=0.9$ and Recall $=0.1$. F1-Score is approximately:", "0.9", "0.5", "0.18", "1.0", 2, "معادلة F1 = 2 * (Precision * Recall) / (Precision + Recall). بالتعويض: 2 * (0.9 * 0.1) / (0.9 + 0.1) = 2 * (0.09) / 1.0 = 0.18."],
+      [62, "LEC 10-SVM BASICS", "What is the main goal of SVM?", "Minimize training error only", "Find hyperplane with maximum margin between classes", "Cluster data into groups", "Minimize number of features", 1, "الهدف الأساسي والرئيسي لخوارزمية SVM هو ليس مجرد إيجاد أي خط يفصل البيانات، بل إيجاد الخط الذي يفصل بينها مع ترك 'أكبر مسافة أمان' (Maximum Margin) ممكنة."],
+      [63, "LEC 10-SVM BASICS", "Support Vectors are:", "All training data points", "Only misclassified points", "Closest points to hyperplane that define the margin", "Random selected points", 2, "متجهات الدعم (Support Vectors) هي نقاط البيانات الأقرب للحد الفاصل. تحريك هذه النقاط فقط هو ما يغير شكل الحد الفاصل، بينما باقي النقاط البعيدة ليس لها أي تأثير يُذكر."],
+      [64, "LEC 10-SVM BASICS", "Margin in $SVM=2/||w||$. To maximize margin, we need to:", "Maximize $||w||$", "Minimize $||w||^{2}$", "Maximize $||w||^{2}$", "Set $||w||=1$", 1, "لأن الهامش يساوي (2 مقسوماً على ||w||)، فلتعظيم هذه القيمة يجب تصغير المقام ||w||. ولتسهيل الاشتقاق والعمليات الرياضية، نقوم بتقليل مربع المقام ||w||^2."],
+      [65, "LEC 10-SVM BASICS", "SVM hyperplane equation is $w \\cdot X + b = 0$. The two support planes are:", "$w \\cdot X + b = 2$ and $w \\cdot X + b = -2$", "$w \\cdot X + b = 0.5$ and $w \\cdot X + b = -0.5$", "$w \\cdot X + b = 1$ and $w \\cdot X + b = -1$", "$w \\cdot X + b = 10$ and $w \\cdot X + b = -10$", 2, "في خوارزمية SVM القياسية (Hard Margin)، يتم تحديد المستويات الداعمة (Support Planes) لتمر عبر النقاط الأقرب، ويتم ضبط المسافة لتكون +1 للفئة الموجبة و -1 للفئة السالبة."],
+      [66, "LEC 10-SVM BASICS", "The SVM constraint is $y(w \\cdot X + b) \\ge 1$. What does this mean for a +Ve class point $(y=1)$?", "$w \\cdot X + b \\ge 0$", "$w \\cdot X + b \\le 1$", "$w \\cdot X + b \\ge 1$", "$w \\cdot X + b = 0$", 2, "لضمان أن النقطة التابعة للفئة الموجبة (y=1) تقع بالكامل خارج الهامش وفي الجانب الصحيح من مستوى الدعم الموجب، يجب أن يكون ناتج المعادلة الخطية لها أكبر من أو يساوي 1."],
+      [67, "LEC 10-SVM BASICS", "Dot product of vectors [2,3] and [5,4] is:", "22", "26", "15", "20", 0, "الضرب النقطي لمتجهين هو مجموع نواتج ضرب العناصر المتقابلة: (2 × 5) + (3 × 4) = 10 + 12 = 22."],
+      [68, "LEC 11-SVM KERNELS", "When is Non-Linear SVM used instead of Linear SVM?", "When dataset is very large", "When data is not linearly separable", "When accuracy is already high", "When features are normalized", 1, "نلجأ لاستخدام الـ Non-Linear SVM (الذي يعتمد على الـ Kernels) عندما تكون البيانات متداخلة ومختلطة بشكل يصعب أو يستحيل فصله باستخدام خط مستقيم (مستوى) واحد."],
+      [69, "LEC 11-SVM KERNELS", "What does a Kernel function do in SVM?", "Removes outliers from data", "Transforms data from lower to higher dimension making it separable", "Reduces number of features", "Calculates the margin directly", 1, "دالة الـ Kernel تقوم رياضياً بإسقاط البيانات وتحويلها من فضائها الحالي (مثلاً ثنائي الأبعاد) إلى فضاء ذي أبعاد أعلى بكثير، حيث تصبح البيانات المعقدة قابلة للفصل."],
+      [70, "LEC 11-SVM KERNELS", "After applying Kernel function, data that was not linearly separable becomes:", "Clustered", "Normalized", "Linearly separable in higher dimension", "Removed from dataset", 2, "النظرية الأساسية للـ Kernels (مثل نظرية Cover) تنص على أن البيانات غير القابلة للفصل الخطي في أبعاد منخفضة، تصبح غالباً قابلة للفصل الخطي بسهولة عند رفعها لأبعاد عليا."],
+      [71, "LEC 11-SVM KERNELS", "The key advantage of Kernels is they compute dot products at higher dimension without:", "Using training data", "Explicitly transforming all data points - saves computation", "Using the hyperplane", "Calculating margin", 1, "هذه هي 'خدعة الكيرنيل' (Kernel Trick) العبقرية؛ فهي تسمح بحساب المسافات في الأبعاد العليا باستخدام معادلة مباشرة، دون الحاجة لتحويل ملايين نقاط البيانات فعلياً، مما يوفر موارد حاسوبية هائلة."],
+      [72, "LEC 12-ENSEMBLE METHODS", "In One vs All (OvA) with 5 classes, how many classifiers are trained?", "10", "4", "5", "25", 2, "في تقنية One vs All (أو One vs Rest)، نقوم بتدريب مُصنف (Classifier) ثنائي واحد لكل فئة موجودة يفصلها عن جميع الفئات الأخرى مجتمعة. لذا 5 فئات تعني 5 نماذج."],
+      [73, "LEC 12-ENSEMBLE METHODS", "In One vs One (OvO) with 4 classes, how many classifiers are trained?", "4", "8", "6", "16", 2, "في تقنية One vs One، نقوم بتدريب مصنف لكل زوج ممكن من الفئات. المعادلة هي N(N-1)/2. بتعويض 4 فئات: (4 × 3) / 2 = 12 / 2 = 6 مُصنفات."],
+      [74, "LEC 12-ENSEMBLE METHODS", "In OvA prediction, the final class is selected by:", "Voting", "Highest score among all K models", "Average of all scores", "Random selection", 1, "في تقنية OvA، نمرر العينة الجديدة لجميع النماذج المُدربة، والنموذج الذي يعطي أعلى قيمة احتمالية أو أعلى ثقة (Highest Score) هو الذي يكسب ويحدد التصنيف النهائي للمشكلة."],
+      [75, "LEC 12-ENSEMBLE METHODS", "In OvO prediction, the final class is selected by:", "Highest score", "Average", "Voting - class with most wins", "First classifier result", 2, "في تقنية OvO، يتم إجراء 'مباراة' بين كل فئتين عبر المصنفات المزدوجة. الفئة التي تفوز بأكبر عدد من المواجهات الفردية (تحصل على أعلى أصوات) هي التصنيف النهائي."],
+      [76, "LEC 12-ENSEMBLE METHODS", "Bagging uses Bootstrap (random sampling with replacement). What does \"with replacement\" mean?", "Same sample can appear multiple times in a subset", "Samples are replaced after training", "New data replaces old data", "Features are replaced with new ones", 0, "السحب مع الإرجاع (With replacement) يعني أن العينة التي تُسحب عشوائياً للتدريب تُعاد للمجموعة مجدداً، مما يسمح لنفس العينة بالظهور عدة مرات في نفس مجموعة التدريب الفرعية."],
+      [77, "LEC 12-ENSEMBLE METHODS", "What is the main difference between Voting and Bagging ensemble methods?", "Voting uses different data, Bagging uses same data", "Voting uses different classifiers same data, Bagging uses same classifier different data subsets", "Both are identical", "Bagging uses sequential models, Voting uses parallel", 1, "طريقة Voting تدمج خوارزميات مختلفة تماماً (مثلاً Decision Tree و SVM و KNN) على نفس البيانات كاملة. بينما Bagging يستخدم خوارزمية واحدة فقط لكن يدربها على عينات عشوائية فرعية من البيانات."],
+      [78, "LEC 12-ENSEMBLE METHODS", "In Stacking, what is the role of the Meta Model (Level 2)?", "Train on original data", "Replace base models", "Take predictions of base models as input and make final decision", "Select best base model", 2, "في تقنية الـ Stacking، المستوى الثاني (Meta-model) لا يرى البيانات الأصلية، بل يتعلم كيفية دمج والاستفادة من 'توقعات' النماذج الأساسية التي تمثل مدخلاته لاتخاذ قرار نهائي أدق."],
+      [79, "LEC 12-ENSEMBLE METHODS", "Boosting differs from Bagging because:", "Boosting uses different classifiers", "Boosting trains models sequentially each fixes errors of previous", "Boosting uses same data for all models", "Boosting only works for regression", 1, "على عكس Bagging الذي يدرب جميع نماذجه بشكل متوازٍ ومستقل تماماً، Boosting يدرب نماذجه بالتسلسل (Sequentially) بحيث يركز كل نموذج جديد على إصلاح الأخطاء التي وقع فيها النموذج الذي سبقه."],
+      [80, "LEC 12-ENSEMBLE METHODS", "Homogeneous Ensemble means:", "Different learners, same data", "Same learner, different data subsets", "Different learners, different data", "Same learner, same data", 1, "الكلمة Homogeneous تعني 'متجانس'. في سياق التجميع، يشير هذا إلى استخدام نفس نوع الخوارزمية الأساسية (مثل أشجار القرار لجميع النماذج) ولكن يتم تدريبها على أجزاء مختلفة من البيانات."],
+      [81, "EXTRA-ATTRIBUTES", "Which attribute type has a meaningful order between values, but the magnitude of difference between values is NOT known?", "Nominal", "Binary", "Ordinal", "Interval", 2, "البيانات الترتيبية (Ordinal) لها ترتيب منطقي واضح (مثل: ضعيف، متوسط، ممتاز)، لكننا لا نستطيع تحديد أو قياس مقدار الفرق الفعلي بين 'ضعيف' و 'متوسط' رياضياً."],
+      [82, "EXTRA-ATTRIBUTES", "Zip codes are made of digits (e.g. 11511, 21526). A student says \"I can calculate the average zip code, so it's Ratio.\" The student is:", "Correct - Ratio", "Wrong - Nominal", "Correct - Ordinal", "Wrong - Interval", 1, "الرمز البريدي هو مجرد 'اسم' أو مُعرف (Identifier) للمنطقة على شكل أرقام. ليس له ترتيب حقيقي ولا يقبل العمليات الحسابية كالمتوسط، لذا فهو بيانات اسمية (Nominal) والطالب مخطئ."],
+      [83, "EXTRA-ATTRIBUTES", "A Likert scale question: \"Rate your satisfaction: 1-Strongly Disagree, 2-Disagree, 3-Neutral, 4-Agree, 5-Strongly Agree.\" Which type?", "Interval", "Ratio", "Ordinal", "Nominal", 2, "مقياس ليكرت للاستبيانات يمتلك ترتيباً (من غير موافق إلى موافق جداً)، لكن الفرق النفسي بين الدرجات غير متساوٍ عددياً وثابت، لذلك يُصنف كبيانات ترتيبية (Ordinal)."],
+      [84, "EXTRA-ATTRIBUTES", "Which of the following pairs are BOTH Ratio attributes?", "Temperature in °C and Weight in kg", "Weight in kg and Height in cm", "Calendar Year and Number of Students", "IQ Score and Salary in EGP", 1, "الوزن والطول يمتلكان 'صفراً مطلقاً' (صفر كجم يعني انعدام الوزن فعلياً)، ولذلك يدعمان جميع العمليات الحسابية كالضرب والقسمة بفاعلية ومنطق، لذلك هما (Ratio)."],
+      [85, "EXTRA-ATTRIBUTES", "\"The difference between $20^{\\circ}C$ and $30^{\\circ}C$ is the same as between $30^{\\circ}C$ and $40^{\\circ}C$.\" This statement means Celsius temperature is at LEAST:", "Nominal", "Ordinal", "Interval", "Binary", 2, "لأن درجات الحرارة المئوية تسمح بحساب المسافات والفروق المتساوية (عن طريق الطرح)، فهي تقع في مستوى البيانات الفترية (Interval). (ليست Ratio لأن الصفر لا يعني انعدام الحرارة)."],
+      [86, "EXTRA-ATTRIBUTES", "A doctor records blood type of patients: A, B, AB, O. Which is correct?", "Ordinal", "Nominal", "Interval", "Ratio", 1, "فصائل الدم هي مجرد أسماء أو فئات لا يمكن ترتيبها زمنياً أو كمياً ولا إجراء أي عمليات حسابية عليها، مما يجعلها بيانات اسمية (Nominal) بامتياز."],
+      [87, "EXTRA-ATTRIBUTES", "Number of cars a person owns (0, 1, 2, 3...) - what makes it Ratio and NOT Interval?", "It has order", "It supports addition", "Zero truly means \"owns no cars\"", "Values are countable integers", 2, "ما يميز مستوى بيانات الـ Ratio عن الـ Interval هو أن رقم 'الصفر' له معنى فيزيائي حقيقي يعبر عن الغياب التام للشيء، وهذا يتحقق هنا (صفر يعني أنه لا يملك أي سيارة)."],
+      [88, "EXTRA-ATTRIBUTES", "A student says \"Ordinal is a special case of Nominal.\" Another says \"Binary is a special case of Nominal.\" Who is correct?", "Only the first student", "Only the second student", "Both are correct", "Neither", 2, "البيانات الثنائية (Binary) هي بالفعل حالة خاصة من البيانات الاسمية (Nominal) تحتوي على فئتين فقط. لكن البيانات الترتيبية (Ordinal) ليست اسمية لوجود خاصية الترتيب التي تفتقر إليها الأولى."],
+      [89, "EXTRA-ATTRIBUTES", "Which operation is VALID for Interval but INVALID for Ratio attributes?", "Subtraction", "Ranking values", "Saying \"value A is twice value B\"", "None - both support the same operations", 2, "بسبب غياب الصفر المطلق في بيانات الـ Interval، فإن عمليات الضرب والقسمة (مثل قول درجة حرارة 40 ضعف 20) تعتبر غير منطقية علمياً. هذه العمليات حصرية لبيانات الـ Ratio."],
+      [90, "EXTRA-ATTRIBUTES", "A hospital records the year patients were born (e.g. 1990, 2001). A researcher claims \"a patient born in 2000 is twice as old as one born in 1000.\" This claim is:", "Correct - Ratio", "Wrong - Interval", "Correct - numerical", "Wrong - Ordinal", 1, "السنوات الميلادية ليس لها صفر مطلق يمثل 'بداية الزمن والكون'، بل هي نقطة مرجعية متفق عليها. لذلك لا يصح إجراء القسمة والضرب عليها، وهي تصنف كبيانات فترية (Interval)."],
+      [91, "EXTRA-ATTRIBUTES", "A dataset contains two attributes: phone number and number of calls made per day. Which classification is correct?", "Both Ratio", "Phone number Nominal, calls Ratio", "Phone number Interval, calls Ordinal", "Both Nominal", 1, "رقم الهاتف هو مجرد اسم أو مُعرف (Nominal). بينما عدد المكالمات هو قيمة قابلة للعد ولها صفر مطلق حقيقي (لم يجرِ أي مكالمة أبداً)، لذلك هو قيمة نسبة (Ratio)."],
+      [92, "EXTRA-ATTRIBUTES", "Student grades: A+, A, B+, B, C+, C, D, F. A professor says \"the difference between A+ and A is the same as between B and C.\" This statement is:", "Correct - Interval", "Wrong - Ordinal", "Correct - Ratio", "Wrong - Nominal", 1, "التقديرات الجامعية (A, B, C) مرتبة، لكن الفروق بينها غير متساوية رياضياً. الجهد للقفز من B إلى A يختلف عن القفز من D إلى C، لذا هي ترتيبية (Ordinal) ولا تدعم الفروق الثابتة."],
+      [93, "EXTRA-ATTRIBUTES", "A thermometer shows $37.5^{\\circ}C$ as a patient's body temperature. Which is correct?", "Nominal", "Ordinal", "Ratio", "Interval", 3, "درجات الحرارة بالمقياس المئوي (Celsius) أو الفهرنهايت تقع ضمن البيانات الفترية (Interval) لعدم وجود صفر حقيقي يمثل غياب الحرارة بشكل مطلق."],
+      [94, "EXTRA-ATTRIBUTES", "A bank records the salary of employees in EGP (some earn 0 EGP = unpaid interns). Which is correct?", "Nominal", "Ordinal", "Interval", "Ratio", 3, "الراتب هو قيمة نقدية كمية لها صفر مطلق حقيقي (لا يتقاضى أي أجر). يمكننا إجراء جميع العمليات عليه كالقسمة (راتب ضعف راتب آخر)، لذلك يُصنف بوضوح (Ratio)."],
+      [95, "EXTRA-ATTRIBUTES", "A history book records years of historical events: 500 BC, 1000 AD, 2000 AD. A student claims \"year 2000 is 4 times year 500.\" This claim is:", "Correct - Ratio", "Wrong - Interval", "Correct - Ordinal", "Wrong - Nominal", 1, "السنوات التاريخية هي بيانات فترية (Interval) لأنها تُقاس بالنسبة لنقطة اعتبارية متفق عليها وليس صفراً مطلقاً حقيقياً للزمن، لذا عمليات الضرب والقسمة كقول 'أربع أضعاف' عليها غير صحيحة."],
+      [96, "EXTRA-ATTRIBUTES", "A geography dataset stores longitude coordinates of cities (e.g. Cairo $=31.2^{\\circ}E$, London $=0^{\\circ}$, New York $=74^{\\circ}W$). Which is correct?", "Nominal", "Ordinal", "Interval", "Ratio", 2, "خطوط الطول والعرض تعتمد على نقاط صفر اعتبارية (مثل خط جرينتش وخط الاستواء) وليس صفراً مطلقاً يمثل غياب المسافة، لذا هي بيانات فترية (Interval)."],
+      [97, "EXTRA-ATTRIBUTES", "A hospital records blood pressure in mmHg for patients (0 mmHg = literally no blood pressure). Which is correct?", "Nominal", "Ordinal", "Interval", "Ratio", 3, "ضغط الدم الطبي له مقياس مادي ملموس وصفر حقيقي واقعي (صفر يعني انعدام الدورة الدموية)، لذلك يدعم بقوة جميع العمليات الرياضية وهو يصنف (Ratio)."],
+      [98, "EXTRA-ML CONCEPTS", "A model has J_train $=0.05$ and J_test $=0.8$. What is the most likely problem?", "Underfitting", "Overshooting", "Overfitting", "High learning rate", 2, "الخطأ المنخفض والممتاز في مجموعة التدريب والخطأ المرتفع جداً في بيانات الاختبار يُعد دليلاً قاطعاً على فرط التخصيص (Overfitting) وحفظ النموذج للبيانات بدلاً من فهمها كنمط عام."],
+      [99, "EXTRA-ML CONCEPTS", "You apply Gradient Descent and after every iteration J is increasing not decreasing. What is the most likely cause?", "Too many features", "Learning rate $\\alpha$ is too large", "Learning rate $\\alpha$ is too small", "The dataset is too small", 1, "إذا كان معدل التعلم $\\alpha$ كبيراً جداً، فإن خطوات التحديث تخطئ الهدف وتقفز (Overshoot) ذهاباً وإياباً على جانبي المنحنى، مما يؤدي لزيادة الخطأ وتضخمه بدلاً من تقليله تدريجياً."],
+      [100, "EXTRA-ML CONCEPTS", "A KNN model with $K=1$ will most likely cause:", "Underfitting", "High Bias", "Overfitting", "Slow convergence", 2, "في خوارزمية KNN، اختيار K=1 يجعل النموذج حساساً جداً لأي نقطة شاذة (Noise) ويحفظ مواقع بيانات التدريب بشكل مفرط بدلاً من فهم النمط العام، مما يسبب مشكلة Overfitting."],
+      [101, "EXTRA-ML CONCEPTS", "Lasso regularization is preferred over Ridge when:", "You want to reduce all weights equally", "You want to completely eliminate unimportant features", "Your dataset is large", "You have a convex cost function", 1, "تُفضل تقنية Lasso (L1) لأنها تُستخدم كأداة قوية لتحديد الخصائص وتصفيتها؛ فهي تقوم بإجبار أوزان الخصائص الضعيفة أو غير المهمة لتكون صفراً تماماً (ينتج Sparse Model)."],
+      [102, "EXTRA-ML CONCEPTS", "As the number of training examples increases, overfitting error decreases but training error slightly increases. At some point both errors meet and stabilize. What is this point called?", "Convergence point", "Optimal point - where more data won't help", "Underfitting zone", "Validation threshold", 1, "نقطة الاستقرار هذه تمثل القدرة الاستيعابية (Capacity) القصوى للنموذج. إضافة المزيد من البيانات بعدها لن يحسن الأداء، وإذا أردنا تحسيناً إضافياً سنحتاج لاستخدام نموذج أكثر تعقيداً."],
+      [103, "EXTRA-ML CONCEPTS", "In Gradient Descent, J starts high then drops steeply then flattens completely. What does the flat part mean?", "Learning rate is too small", "Model is overfitting", "Algorithm has converged - minimum reached", "More iterations needed", 2, "عندما يتسطح منحنى التكلفة (يصبح أفقياً)، فهذا يعني رياضياً أن قيمة التكلفة J لم تعد تتغير أو تنقص بشكل ملحوظ، والخوارزمية استقرت ووصلت للحد الأدنى الممكن (Convergence)."],
+      [104, "EXTRA-ML CONCEPTS", "The Sigmoid function output is always between 0 and 1. What happens exactly when the input $Z=0$?", "Output $=0$", "Output $=1$", "Output $=0.5$", "Output = undefined", 2, "في دالة Sigmoid التي صياغتها 1 / (1 + e^-Z)، إذا عوضنا بـ Z=0، فإن e^0 = 1. إذن المعادلة تصبح (1 / 1 + 1) وهو ما يعادل 0.5 بالضبط."],
+      [105, "EXTRA-ML CONCEPTS", "The cost function J in Linear Regression is convex. What does this guarantee?", "Multiple local minima exist", "Gradient Descent may get stuck", "There is exactly one global minimum", "J will always equal zero", 2, "الميزة الكبرى للدالة المحدبة (Convex) -التي تشبه شكل الوعاء- هي وجود قاع أو نقطة دنيا واحدة فقط (Global minimum)، مما يضمن نجاح الخوارزمية دائماً في العثور على الحل الأمثل."],
+      [106, "EXTRA-ML CONCEPTS", "Why is MSE specifically chosen as the cost function in Linear Regression instead of other functions?", "It's the simplest formula", "It produces a convex shape guaranteeing one optimal solution", "It works only with large datasets", "It prevents overfitting automatically", 1, "يتم تفضيل استخدام خطأ المربعات (MSE) في الانحدار الخطي لأن اشتقاقها يُنتج دالة تكلفة محدبة (Convex shape) كروية متناسقة، مما يضمن عدم وجود أي أخطاء محلية خادعة (Local minima)."],
+      [107, "EXTRA-ML CONCEPTS", "In the convex J graph, you are currently at a point where the slope is negative. What will Gradient Descent do?", "Increase $\\theta$ to move right toward minimum", "Decrease $\\theta$ to move left", "Stop immediately", "Overshoot the minimum", 0, "الميل السالب (انحدار لليمين) يعني أننا حالياً على الجانب الأيسر من منحنى التكلفة. لكي نصل للقاع الذي يقع على يميننا، يجب أن نتحرك لليمين (نزيد قيمة المتغير $\\theta$)."],
+      [108, "EXTRA-ML CONCEPTS", "In the convex J graph, you are at a point where the slope is positive. Gradient Descent will:", "Increase $\\theta$", "Keep unchanged", "Decrease $\\theta$ to move left toward minimum", "Reset to zero", 2, "الميل الموجب (صعود لليمين) يعني أننا تجاوزنا القاع ونحن حالياً على الجانب الأيمن. لكي نعود أدراجنا للقاع، يجب أن نقلل قيمة المتغير $\\theta$ (نتحرك لليسار)."],
+      [109, "SCALE PRACTICE - MIN-MAX", "Min-Max Normalization: Data $=[2,6,10,14,18]$. Normalize $x=10$.", "0.25", "0.50", "0.75", "0.80", 1, "معادلة التطبيع Min-Max: (القيمة الحالية - الأصغر) / (الأكبر - الأصغر). إذن (10 - 2) / (18 - 2) = 8 / 16 = 0.50."],
+      [110, "SCALE PRACTICE - MIN-MAX", "Min-Max Normalization: Data $=[0,25,50,75,100]$. Normalize $x=25$.", "0.50", "0.75", "0.25", "0.10", 2, "بتطبيق المعادلة Min-Max: القيمة الصغرى 0 والكبرى 100. إذن (25 - 0) / (100 - 0) = 25 / 100 = 0.25."],
+      [111, "SCALE PRACTICE-Z-SCORE", "Z-Score Normalization: Data $= [10, 20, 30, 40, 50]$. Normalize $x=50$.", "1.0", "-1.41", "0.71", "1.41", 3, "المتوسط الحسابي = 30. الانحراف المعياري للبيانات = 14.14 تقريباً. حساب Z-Score = (50 - 30) / 14.14 = 20 / 14.14 = 1.41 تقريباً."],
+      [112, "SCALE PRACTICE-Z-SCORE", "Z-Score Normalization: Data $=[5,10,15,20,25]$. Normalize $x=5$.", "1.41", "-0.71", "-1.41", "0.71", 2, "المتوسط الحسابي = 15. الانحراف المعياري = 7.07 تقريباً. حساب Z-Score = (5 - 15) / 7.07 = -10 / 7.07 = -1.41 تقريباً."],
+      [113, "SCALE PRACTICE - DEC SCALING", "Decimal Scaling: Data $=[45,120,250,380,500]$. Scale $x=250$.", "0.025", "2.5", "0.25", "25", 2, "أكبر رقم مطلق في المجموعة هو 500، وهو يتكون من 3 خانات. لذا نحتاج للقسمة على 1000 ليصبح 0.500 (أقل من 1). إذن نقسم القيمة المطلوبة: 250 / 1000 = 0.25."],
+      [114, "SCALE PRACTICE - DEC SCALING", "Decimal Scaling: Data $= [90, 288, 800, 1200, 2000]$. Scale $x=288$.", "0.288", "0.0288", "2.88", "0.00288", 1, "أكبر رقم في المجموعة (2000) يتكون من 4 خانات. لجعله أقل من 1، يجب القسمة على 10,000. إذن القيمة المطلوبة 288 / 10,000 = 0.0288."],
+      [115, "PREPROCESSING - BINNING", "EQUAL WIDTH BINNING: Data $= [4, 8, 12, 16, 20, 24, 28, 32, 36, 40]$, bins $= 4$. What is the bin width?", "7", "8", "9", "10", 2, "عرض الفترة (Width) يُحسب بالمعادلة: (القيمة الكبرى - القيمة الصغرى) / عدد الفترات. إذن (40 - 4) / 4 = 36 / 4 = 9."],
+      [116, "PREPROCESSING - BINNING", "Value 20 belongs to which bin? (Data as previous question)", "Bin 1 $\\rightarrow [4,13)$", "Bin 2 $\\rightarrow [13, 22)$", "Bin 3 $\\rightarrow [22, 31)$", "Bin 4 $\\rightarrow [31, 40]$", 1, "بما أن عرض الفترة هو 9. ستكون الفترات: الأولى [4, 13)، الثانية [13, 22). إذن الرقم 20 يقع بوضوح داخل نطاق الفترة الثانية."],
+      [117, "PREPROCESSING-BINNING", "How many values are in Bin 4? (Data as previous question)", "1", "2", "3", "4", 2, "الفترة الرابعة تمتد من [31, 40]. بالنظر للبيانات المتوفرة، القيم التي تقع فعلياً في هذا النطاق هي (32, 36, 40)، أي أن هناك 3 قيم."],
+      [118, "PREPROCESSING-BINNING", "EQUAL FREQUENCY BINNING: Data $= [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47]$, bins $= 4$. How many values per bin?", "2", "6", "4", "3", 3, "في الـ Equal Frequency، يتم قسمة إجمالي عدد العناصر المتاحة (12 عنصراً) على عدد الفترات المطلوبة (4). إذن كل فترة ستحتوي على 12 / 4 = 3 عناصر بالضبط."],
+      [119, "PREPROCESSING-BINNING", "Value 31 belongs to which bin? (Data as previous question)", "Bin 1", "Bin 2", "Bin 3", "Bin 4", 2, "البيانات (12 رقم) مرتبة تصاعدياً. ستحتوي كل فترة على 3 أرقام. الفترة الثالثة ستحتوي الأرقام الثلاثة (27, 31, 35). إذن الرقم 31 يقع في الفترة الثالثة."],
+      [120, "PREPROCESSING-BINNING", "What are the values in Bin 2? (Data as previous question)", "3, 7, 11", "11, 15, 19", "15, 19, 23", "27, 31, 35", 2, "بعد توزيع العناصر المرتبة (3 أرقام لكل فترة): الفترة الأولى تأخذ (3,7,11)، وبالتالي الفترة الثانية ستحتوي على العناصر الثلاثة التالية مباشرة وهي (15, 19, 23)."]
     ];
 
     let score = 0;
     let answeredQuestions = 0;
+    let wrongAnswersIds = []; // Array to store IDs of wrongly answered questions
 
     function updateScoreDisplay() {
       const display = document.getElementById('scoreDisplay');
@@ -220,13 +296,68 @@
       }, 300);
     }
 
+    function showSummary() {
+      const modal = document.getElementById('summaryModal');
+      const content = document.getElementById('summaryContent');
+      const statsText = document.getElementById('summaryStatsText');
+      const modalContent = document.getElementById('summaryModalContent');
+
+      // Update text based on state
+      if (answeredQuestions === 0) {
+        statsText.innerText = "لم تقم بالإجابة على أي أسئلة بعد.";
+        content.innerHTML = "";
+      } else if (wrongAnswersIds.length === 0) {
+        statsText.innerHTML = `رائع! لقد أجبت على <strong class="text-green-600">${answeredQuestions}</strong> أسئلة بشكل صحيح تماماً.`;
+        content.innerHTML = `<div class="bg-green-50 border border-green-200 text-green-700 p-4 rounded-xl text-center font-bold">لا يوجد لديك أي أخطاء حتى الآن، استمر! 👏</div>`;
+      } else {
+        statsText.innerHTML = `لقد أجبت على <strong>${answeredQuestions}</strong> أسئلة، وأخطأت في <strong class="text-red-600">${wrongAnswersIds.length}</strong> منها.`;
+
+        let html = `<p class="font-semibold text-slate-800 mb-3">انقر على رقم السؤال للمراجعة:</p>`;
+        html += `<div class="flex flex-wrap gap-2 justify-center">`;
+
+        // Sort IDs just in case
+        wrongAnswersIds.sort((a, b) => a - b).forEach(id => {
+          html += `
+            <a href="#q-card-${id}" onclick="closeSummary()" 
+               class="bg-red-50 hover:bg-red-100 text-red-700 font-semibold px-4 py-2 rounded-lg border border-red-200 hover:border-red-400 transition-all shadow-sm">
+              سؤال ${id}
+            </a>`;
+        });
+
+        html += `</div>`;
+        content.innerHTML = html;
+      }
+
+      // Show modal with animation
+      modal.classList.remove('hidden');
+      // small timeout to allow display:block to apply before adding opacity
+      setTimeout(() => {
+        modal.classList.remove('opacity-0');
+        modalContent.classList.remove('scale-95');
+        modalContent.classList.add('scale-100');
+      }, 10);
+    }
+
+    function closeSummary() {
+      const modal = document.getElementById('summaryModal');
+      const modalContent = document.getElementById('summaryModalContent');
+
+      modal.classList.add('opacity-0');
+      modalContent.classList.remove('scale-100');
+      modalContent.classList.add('scale-95');
+
+      setTimeout(() => {
+        modal.classList.add('hidden');
+      }, 300); // match the duration of tailwind transition
+    }
+
     function createQuestionCard(qData, index) {
       const [id, topic, question, optA, optB, optC, optD, correctIdx] = qData;
       const options = [optA, optB, optC, optD];
       const labels = ['A', 'B', 'C', 'D'];
 
       const card = document.createElement('div');
-      card.className = "bg-white shadow-lg rounded-2xl border border-purple-100 overflow-hidden mb-6 transition-all hover:shadow-xl";
+      card.className = "bg-white shadow-lg rounded-2xl border border-purple-100 overflow-hidden mb-6 transition-all hover:shadow-xl scroll-mt-24";
       card.id = `q-card-${id}`;
 
       const header = document.createElement('div');
@@ -238,7 +369,7 @@
 
       const body = document.createElement('div');
       body.className = "p-6";
-      body.innerHTML = `<p class="english-text text-xl text-gray-800 font-semibold mb-6">${question}</p>`;
+      body.innerHTML = `<p class="english-text text-xl text-gray-800 font-semibold mb-6 leading-relaxed">${question}</p>`;
 
       const optionsContainer = document.createElement('div');
       optionsContainer.className = "space-y-3";
@@ -295,10 +426,16 @@
         icon.innerHTML = `<svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>`;
         icon.classList.remove('hidden');
 
-        feedbackMsg.innerHTML = "إجابة صحيحة! أحسنت";
+        feedbackMsg.innerHTML = "إجابة صحيحة! أحسنت 👏";
         feedbackMsg.classList.add('text-green-600', 'block');
         feedbackMsg.classList.remove('hidden');
       } else {
+        // Handle Wrong Answer
+        if (!wrongAnswersIds.includes(questionId)) {
+          wrongAnswersIds.push(questionId);
+          document.getElementById('wrongCountHeader').innerText = wrongAnswersIds.length;
+        }
+
         const wrongBtn = buttons[selectedIdx];
         wrongBtn.classList.remove('bg-gray-50', 'border-gray-100', 'text-gray-700');
         wrongBtn.classList.add('bg-red-100', 'border-red-500', 'text-red-800');
@@ -319,17 +456,20 @@
         correctCircle.classList.remove('border-gray-300', 'text-gray-500');
         correctCircle.classList.add('border-green-500', 'text-green-600', 'bg-green-100');
 
-        feedbackMsg.innerHTML = "إجابة خاطئة! ";
+        feedbackMsg.innerHTML = "إجابة خاطئة! ❌";
         feedbackMsg.classList.add('text-red-600', 'block');
         feedbackMsg.classList.remove('hidden');
       }
 
+      // Explanation logic fixed
       const qData = rawData.find(q => q[0] === questionId);
       const options = [qData[3], qData[4], qData[5], qData[6]];
-      const topic = qData[1];
       const predefinedExplanation = qData[8];
 
-      const explanationText = predefinedExplanation || `الإجابة الصحيحة هي: <strong>"${options[correctIdx]}"</strong>.<br> تم استنتاج هذه الإجابة بناءً على القواعد والمفاهيم المتعلقة بـ (${topic}) كما وردت في منهج الدورة.`;
+      // If explanation is present, show it. Otherwise show a clean direct answer message.
+      const explanationText = predefinedExplanation
+        ? predefinedExplanation
+        : `الإجابة الصحيحة هي: <strong class="english-text px-1 text-blue-700">"${options[correctIdx]}"</strong><br><span class="text-sm text-blue-500/80 mt-2 block">(ملاحظة: لا يوجد توضيح مفصل مضاف لهذا السؤال في قاعدة البيانات)</span>`;
 
       const explanationDiv = document.createElement('div');
       explanationDiv.className = "mt-5 p-5 bg-blue-50 border border-blue-200 rounded-xl text-right text-blue-900 shadow-sm";
@@ -365,6 +505,13 @@
           console.log('MathJax rendering complete');
         }).catch((err) => console.log('MathJax rendering failed: ' + err.message));
       }
+
+      // Close modal on Escape key
+      document.addEventListener('keydown', (e) => {
+        if (e.key === "Escape") {
+          closeSummary();
+        }
+      });
     }
 
     document.addEventListener('DOMContentLoaded', init);
